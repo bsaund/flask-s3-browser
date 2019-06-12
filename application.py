@@ -4,14 +4,14 @@ from flask_bootstrap import Bootstrap
 from filters import datetimeformat, file_type
 from resources import get_bucket, get_buckets_list
 
-app = Flask(__name__)
-Bootstrap(app)
-app.secret_key = 'secret'
-app.jinja_env.filters['datetimeformat'] = datetimeformat
-app.jinja_env.filters['file_type'] = file_type
+application = Flask(__name__)
+Bootstrap(application)
+application.secret_key = 'secret'
+application.jinja_env.filters['datetimeformat'] = datetimeformat
+application.jinja_env.filters['file_type'] = file_type
 
 
-@app.route('/', methods=['GET', 'POST'])
+@application.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         bucket = request.form['bucket']
@@ -22,7 +22,7 @@ def index():
         return render_template("index.html", buckets=buckets)
 
 
-@app.route('/files')
+@application.route('/files')
 def files():
     my_bucket = get_bucket()
     summaries = my_bucket.objects.all()
@@ -30,7 +30,7 @@ def files():
     return render_template('files.html', my_bucket=my_bucket, files=summaries)
 
 
-@app.route('/upload', methods=['POST'])
+@application.route('/upload', methods=['POST'])
 def upload():
     file = request.files['file']
 
@@ -41,7 +41,7 @@ def upload():
     return redirect(url_for('files'))
 
 
-@app.route('/delete', methods=['POST'])
+@application.route('/delete', methods=['POST'])
 def delete():
     key = request.form['key']
 
@@ -52,7 +52,7 @@ def delete():
     return redirect(url_for('files'))
 
 
-@app.route('/download', methods=['POST'])
+@application.route('/download', methods=['POST'])
 def download():
     key = request.form['key']
 
@@ -67,4 +67,4 @@ def download():
 
 
 if __name__ == "__main__":
-    app.run()
+    application.run()
