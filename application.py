@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, \
     Response, session
 from flask_bootstrap import Bootstrap
 from filters import datetimeformat, file_type
-from resources import get_bucket, get_buckets_list
+from resources import get_bucket, get_buckets_list, get_url
 
 application = Flask(__name__)
 Bootstrap(application)
@@ -25,9 +25,21 @@ def index():
 @application.route('/files')
 def files():
     my_bucket = get_bucket()
-    summaries = my_bucket.objects.all()
-
+    files = my_bucket.objects.all()
+    summaries = [f for f in files]
+    for f in summaries:
+        f.url = get_url(f)
     return render_template('files.html', my_bucket=my_bucket, files=summaries)
+
+
+@application.route('/victor')
+def victor():
+    my_bucket = get_bucket()
+    files = my_bucket.objects.all()
+    summaries = [f for f in files]
+    for f in summaries:
+        f.url = get_url(f)
+    return render_template('victor.html', my_bucket=my_bucket, files=summaries)
 
 
 @application.route('/upload', methods=['POST'])
@@ -64,7 +76,6 @@ def download():
         mimetype='text/plain',
         headers={"Content-Disposition": "attachment;filename={}".format(key)}
     )
-
 
 if __name__ == "__main__":
     application.run()

@@ -26,3 +26,9 @@ def get_bucket():
 def get_buckets_list():
     client = boto3.client('s3')
     return client.list_buckets().get('Buckets')
+
+def get_url(s3_file):
+    client = boto3.client('s3')
+    return client.generate_presigned_url("get_object",
+                                         Params={"Bucket":s3_file.bucket_name,
+                                                 "Key": s3_file.key})
