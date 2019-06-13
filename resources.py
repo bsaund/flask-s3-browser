@@ -32,3 +32,32 @@ def get_url(s3_file):
     return client.generate_presigned_url("get_object",
                                          Params={"Bucket":s3_file.bucket_name,
                                                  "Key": s3_file.key})
+def get_queue_elem():
+    sqs = boto3.resource("sqs")
+    client = boto3.client("sqs")
+    queuename = "test"
+
+    try:
+        queue = sqs.get_queue_by_name(QueueName=queuename)
+    except client.exceptions.QueueDoesNotExist as e:
+        print("queue does not exist. Creating")
+        queue = sqs.create_queue(QueueName=queuename, Attributes={"DelaySeconds": "5"})
+    # print(queue.url)
+
+    # queue.send_message(MessageBody=body)
+    # print "pushed'", body, "'to queue:", queuename
+    # queue.send_message(MessageBody="hello2")
+
+
+    msgs = queue.receive_messages()
+    try:
+        return msgs[0]
+    except:
+        return None
+    
+        # 
+    # return msg
+    # while len(msgs) > 0:
+        # print(msg.body)
+        # msg.delete()
+        # msgs = queue.receive_messages()

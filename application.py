@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, \
     Response, session
 from flask_bootstrap import Bootstrap
 from filters import datetimeformat, file_type
-from resources import get_bucket, get_buckets_list, get_url
+from resources import get_bucket, get_buckets_list, get_url, get_queue_elem
 
 application = Flask(__name__)
 Bootstrap(application)
@@ -10,6 +10,7 @@ application.secret_key = 'secret'
 application.jinja_env.filters['datetimeformat'] = datetimeformat
 application.jinja_env.filters['file_type'] = file_type
 
+msg = None
 
 @application.route('/', methods=['GET', 'POST'])
 def index():
@@ -34,10 +35,24 @@ def files():
 
 @application.route('/victor')
 def victor():
+    global msg
     my_bucket = get_bucket()
-    img_file = my_bucket.Object("CHS_picture.png")
+
+    msg = get_queue_elem()
+    img_name = "Queue_empty.png" if msg is None else msg.body
+    img_file = my_bucket.Object(img_name)
     img_file.url = get_url(img_file)
     return render_template('victor.html', img_file=img_file)
+
+@application.route('/clicked_coords')
+def clicked_coords():
+    # return redirect(url_for('victor'))
+    coords = [k for k in request.args.keys()]
+    coords = coords[0]
+    msg.delete()
+    # return render_template('clicked_coords.html', coords=coords)
+    return redirect(url_for('victor'))
+    
 
 
 

@@ -4,11 +4,7 @@
 {% block content %}
   <div class="container">
     <div class="col-12-xs">
-      <h3>What Victor Sees</h3>
-      <p>{{img_file.key}}</p>
-      <a href="clicked_coords">
-        <img src={{img_file.url}} width="800px" ismap>
-      </a>
+      <h3>You clicked: {{coords}}</h3>
     </div>
   </div>
 {% endblock %}
