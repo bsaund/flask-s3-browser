@@ -35,11 +35,10 @@ def files():
 @application.route('/victor')
 def victor():
     my_bucket = get_bucket()
-    files = my_bucket.objects.all()
-    summaries = [f for f in files]
-    for f in summaries:
-        f.url = get_url(f)
-    return render_template('victor.html', my_bucket=my_bucket, files=summaries)
+    img_file = my_bucket.Object("CHS_picture.png")
+    img_file.url = get_url(img_file)
+    return render_template('victor.html', img_file=img_file)
+
 
 
 @application.route('/upload', methods=['POST'])
