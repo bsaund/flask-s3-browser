@@ -2,6 +2,7 @@ import boto3
 from config import S3_BUCKET, S3_KEY, S3_SECRET
 from flask import session
 
+
 def _get_s3_resource():
     if S3_KEY and S3_SECRET:
         return boto3.resource(
@@ -26,6 +27,15 @@ def get_bucket():
 def get_buckets_list():
     client = boto3.client('s3')
     return client.list_buckets().get('Buckets')
+
+def write_to_dynamodb(key, val):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table("CommandPosition")
+    table.put_item(
+        Item={"image_id": key,
+              "command": val
+        }
+    )
 
 def get_url(s3_file):
     client = boto3.client('s3')
