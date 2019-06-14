@@ -2,6 +2,7 @@ import boto3
 from config import S3_BUCKET, S3_KEY, S3_SECRET
 from flask import session
 
+boto3.setup_default_session(region_name='us-west-2')
 
 def _get_s3_resource():
     if S3_KEY and S3_SECRET:
